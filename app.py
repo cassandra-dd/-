@@ -411,7 +411,7 @@ def generate_week_summary_sentence(training_days, part_counts, mood_text):
     return "，".join(parts) + "～"
 
 def consult_ai_advisor(api_key, base_url, model, system_prompt, user_prompt):
-    if not api_key: return "请先在侧边栏输入 API Key 才能召唤 AI 助手哦～"
+    if not api_key: return "AI 未配置：请在 Secrets/环境变量中设置 OPENAI_API_KEY（或 DEEPSEEK_API_KEY）。"
     client = OpenAI(api_key=api_key, base_url=base_url)
     try:
         response = client.chat.completions.create(
@@ -433,13 +433,10 @@ def main():
         st.title("🍑 健身小助手")
         page = st.radio("导航", ["📝 今日记录", "📅 历史记录", "✨ 生成本周内容", "🍽️ 今天吃什么", "🆘 吃多了怎么办"])
         st.markdown("---")
-        env_api_key = get_setting("OPENAI_API_KEY", "DEEPSEEK_API_KEY", default="")
-        env_base_url = get_setting("OPENAI_BASE_URL", "DEEPSEEK_BASE_URL", default="https://api.deepseek.com")
-        env_model = get_setting("OPENAI_MODEL", "DEEPSEEK_MODEL", default="deepseek-chat")
-        api_key_input = st.text_input("API Key", type="password", placeholder="留空则读取环境变量")
-        api_key = api_key_input.strip() or env_api_key
-        base_url = st.text_input("Base URL", value=env_base_url).strip() or env_base_url
-        model_name = st.text_input("模型名称", value=env_model).strip() or env_model
+
+    api_key = get_setting("OPENAI_API_KEY", "DEEPSEEK_API_KEY", default="").strip()
+    base_url = get_setting("OPENAI_BASE_URL", "DEEPSEEK_BASE_URL", default="https://api.deepseek.com").strip()
+    model_name = get_setting("OPENAI_MODEL", "DEEPSEEK_MODEL", default="deepseek-chat").strip()
 
     if page == "📝 今日记录":
         st.header("📝 今天的汗水时刻")
